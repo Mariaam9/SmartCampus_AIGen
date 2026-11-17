@@ -1,0 +1,25 @@
+
+# ==========================================
+# SmartCampus AI - Python Dependencies
+# Python 3.12
+# ==========================================
+
+# AI Service
+fastapi
+uvicorn[standard]
+
+# Agentic Orchestration
+langgraph
+
+# Vector Database - PostgreSQL / pgvector
+pgvector
+psycopg[binary]
+
+# PDF Extraction
+PyMuPDF
+
+# DOCX Extraction
+python-docx
+
+# Embeddings
+sentence-transformers
