@@ -146,20 +146,21 @@ Verify the API through its Swagger documentation if enabled.
 ```bash
 python -m uvicorn app.main:app --reload 
 ```
-7. Backend Setup (NestJS)
+## 7. Backend Setup (NestJS)
 
 Navigate to the backend directory:
-
+```bash
 cd backend
+```
 
 Install dependencies:
-
+```bash
 npm install
-
+```
 Start the NestJS development server:
-
+```bash
 npm run start:dev
-
+```
 The backend should start in development mode with automatic reloading when source files change.
 
 By default, NestJS runs on:
