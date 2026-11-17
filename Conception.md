@@ -6,7 +6,7 @@
 
 ## 2. Architecture technique
 
-![SmartCampus AI system design](docs/images/System_design.png)
+![SmartCampus AI system design](docs/images/System_design.jpeg)
 
 ## 2. Technological Stack
 
