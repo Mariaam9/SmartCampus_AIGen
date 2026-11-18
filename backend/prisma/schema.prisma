@@ -1,0 +1,525 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum UserRole {
+  CANDIDAT
+  RESPONSABLE
+  ADMIN
+}
+
+enum PublicationStatus {
+  BROUILLON
+  PUBLIE
+  ARCHIVE
+}
+
+enum CandidateStatus {
+  ACTIF
+  INACTIF
+}
+
+enum PreinscriptionStatus {
+  BROUILLON
+  SOUMISE
+  EN_COURS
+  ACCEPTEE
+  REFUSEE
+  ANNULEE
+}
+
+enum EquivalenceStatus {
+  EN_ATTENTE
+  ACCEPTEE
+  REFUSEE
+}
+
+enum RendezVousStatus {
+  PLANIFIE
+  CONFIRME
+  ANNULE
+  TERMINE
+}
+
+enum DocumentStatus {
+  ACTIF
+  ARCHIVE
+  SUPPRIME
+}
+
+enum DocumentOperationType {
+  AJOUT
+  MODIFICATION
+  SUPPRESSION
+}
+
+enum ProcessingStatus {
+  EN_ATTENTE
+  EN_COURS
+  TERMINE
+  ECHEC
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+// ============================================================
+// CATALOGUE ACADEMIQUE
+// ============================================================
+
+model Etablissement {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  nom         String
+  description String?
+  logoUrl     String?
+
+  formations   Formation[]
+  responsables Responsable[]
+  documents    Document[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("etablissements")
+}
+
+model Formation {
+  id             Int              @id @default(autoincrement())
+  etablissementId Int
+  nom            String
+  description    String?
+  niveau         String?
+  duree          String?
+  statut         PublicationStatus @default(BROUILLON)
+
+  etablissement       Etablissement        @relation(fields: [etablissementId], references: [id], onDelete: Cascade)
+  specialites         Specialite[]
+  conditionsAdmission ConditionAdmission[]
+  prerequis           Prerequis[]
+  tarifs              Tarif[]
+  preinscriptions     Preinscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([etablissementId])
+  @@index([statut])
+  @@map("formations")
+}
+
+model Specialite {
+  id          Int    @id @default(autoincrement())
+  formationId Int
+  nom         String
+  description String?
+
+  formation  Formation   @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  programmes Programme[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([formationId])
+  @@map("specialites")
+}
+
+model Programme {
+  id           Int    @id @default(autoincrement())
+  specialiteId Int
+  nom          String
+  description  String?
+  annee        Int?
+
+  specialite       Specialite        @relation(fields: [specialiteId], references: [id], onDelete: Cascade)
+  programmeMatieres ProgrammeMatiere[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([specialiteId])
+  @@map("programmes")
+}
+
+model Matiere {
+  id          Int    @id @default(autoincrement())
+  code        String @unique
+  nom         String
+  description String?
+  credits     Float?
+
+  programmeMatieres ProgrammeMatiere[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("matieres")
+}
+
+model ProgrammeMatiere {
+  programmeId Int
+  matiereId  Int
+  semestre   Int?
+  coefficient Float?
+
+  programme Programme @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  matiere   Matiere   @relation(fields: [matiereId], references: [id], onDelete: Cascade)
+
+  @@id([programmeId, matiereId])
+  @@index([matiereId])
+  @@map("programme_matieres")
+}
+
+model ConditionAdmission {
+  id                Int              @id @default(autoincrement())
+  formationId       Int
+  description       String
+  statutPublication PublicationStatus @default(BROUILLON)
+  dateDebutValidite DateTime?
+  dateFinValidite   DateTime?
+
+  formation Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([formationId])
+  @@index([statutPublication])
+  @@map("conditions_admission")
+}
+
+model Prerequis {
+  id          Int    @id @default(autoincrement())
+  formationId Int
+  description String
+  niveau      String?
+
+  formation Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([formationId])
+  @@map("prerequis")
+}
+
+model Tarif {
+  id                Int              @id @default(autoincrement())
+  formationId       Int
+  libelle           String
+  montant           Decimal          @db.Decimal(10, 2)
+  modalitesPaiement String?
+  statutPublication PublicationStatus @default(BROUILLON)
+  dateDebutValidite DateTime?
+  dateFinValidite   DateTime?
+
+  formation Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([formationId])
+  @@index([statutPublication])
+  @@map("tarifs")
+}
+
+// ============================================================
+// UTILISATEURS
+// ============================================================
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  nom          String
+  prenom       String
+  telephone    String?
+
+  profilAcademique ProfilAcademique?
+  candidat         Candidat?
+  responsable      Responsable?
+
+  visitorSessions VisitorSession[]
+  conversations   Conversation[]
+  documents       Document[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model ProfilAcademique {
+  id             Int     @id @default(autoincrement())
+  userId         Int     @unique
+  niveauEtude    String?
+  etablissement  String?
+  diplome        String?
+  anneeObtention Int?
+  moyenne        Float?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("profils_academiques")
+}
+
+model Candidat {
+  id     Int             @id @default(autoincrement())
+  userId Int             @unique
+  statut CandidateStatus @default(ACTIF)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  preinscriptions Preinscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("candidats")
+}
+
+model Responsable {
+  id             Int    @id @default(autoincrement())
+  userId         Int    @unique
+  etablissementId Int
+  fonction       String?
+  service        String?
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  etablissement Etablissement @relation(fields: [etablissementId], references: [id], onDelete: Cascade)
+  rendezVous    RendezVous[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([etablissementId])
+  @@map("responsables")
+}
+
+// ============================================================
+// VISITEURS / CONVERSATIONS
+// ============================================================
+
+model VisitorSession {
+  id              Int      @id @default(autoincrement())
+  sessionToken    String   @unique
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+  lastActivityAt  DateTime @default(now())
+  userId          Int?
+
+  user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  conversations Conversation[]
+
+  @@index([expiresAt])
+  @@index([userId])
+  @@map("visitor_sessions")
+}
+
+model Conversation {
+  id              Int      @id @default(autoincrement())
+  userId          Int?
+  visitorSessionId Int?
+  titre           String?
+
+  user          User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  visitorSession VisitorSession? @relation(fields: [visitorSessionId], references: [id], onDelete: SetNull)
+  messages       Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([visitorSessionId])
+  @@map("conversations")
+}
+
+model Message {
+  id             Int         @id @default(autoincrement())
+  conversationId Int
+  role           MessageRole
+  contenu        String
+  expiresAt      DateTime?
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([conversationId])
+  @@index([expiresAt])
+  @@map("messages")
+}
+
+// ============================================================
+// PREINSCRIPTIONS / CANDIDATURES
+// ============================================================
+
+model Preinscription {
+  id             Int                 @id @default(autoincrement())
+  candidatId     Int
+  formationId    Int
+  statut         PreinscriptionStatus @default(BROUILLON)
+  commentaire    String?
+  dateCreation   DateTime            @default(now())
+  dateModification DateTime          @updatedAt
+
+  candidat  Candidat  @relation(fields: [candidatId], references: [id], onDelete: Cascade)
+  formation Formation @relation(fields: [formationId], references: [id], onDelete: Restrict)
+
+  equivalences Equivalence[]
+  rendezVous   RendezVous[]
+
+  @@index([candidatId])
+  @@index([formationId])
+  @@index([statut])
+  @@map("preinscriptions")
+}
+
+model Equivalence {
+  id                Int               @id @default(autoincrement())
+  preinscriptionId  Int
+  diplomeSource     String
+  etablissementSource String?
+  description       String?
+  statut            EquivalenceStatus @default(EN_ATTENTE)
+  decision          String?
+
+  preinscription Preinscription @relation(fields: [preinscriptionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([preinscriptionId])
+  @@index([statut])
+  @@map("equivalences")
+}
+
+model RendezVous {
+  id               Int               @id @default(autoincrement())
+  preinscriptionId Int
+  responsableId    Int
+  dateHeure        DateTime
+  statut           RendezVousStatus @default(PLANIFIE)
+  motif            String?
+
+  preinscription Preinscription @relation(fields: [preinscriptionId], references: [id], onDelete: Cascade)
+  responsable    Responsable    @relation(fields: [responsableId], references: [id], onDelete: Restrict)
+  entretien      Entretien?
+
+  createdAt DateTime @default(now())
+
+  @@index([preinscriptionId])
+  @@index([responsableId])
+  @@index([dateHeure])
+  @@map("rendez_vous")
+}
+
+model Entretien {
+  id           Int      @id @default(autoincrement())
+  rendezVousId Int      @unique
+  resultat     String?
+  commentaire  String?
+  score        Float?
+
+  rendezVous RendezVous @relation(fields: [rendezVousId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("entretiens")
+}
+
+// ============================================================
+// DOCUMENTS / SYNCHRONISATION RAG
+// ============================================================
+
+model Document {
+  id             Int            @id @default(autoincrement())
+  etablissementId Int
+  nom            String
+  type           String
+  description    String?
+  uploadedBy     Int?
+  statut         DocumentStatus @default(ACTIF)
+
+  etablissement Etablissement @relation(fields: [etablissementId], references: [id], onDelete: Cascade)
+  uploader      User?         @relation(fields: [uploadedBy], references: [id], onDelete: SetNull)
+  versions      DocumentVersion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([etablissementId])
+  @@index([statut])
+  @@map("documents")
+}
+
+model DocumentVersion {
+  id             Int      @id @default(autoincrement())
+  documentId     Int
+  version        Int
+  nomFichier     String
+  cheminFichier  String
+  taille         BigInt?
+  hash           String?
+
+  document    Document              @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  traitements TraitementDocument[]
+  chunks      DocumentChunk[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([documentId, version])
+  @@index([documentId])
+  @@map("document_versions")
+}
+
+model TraitementDocument {
+  id                Int                   @id @default(autoincrement())
+  documentVersionId Int
+  typeOperation     DocumentOperationType
+  statut            ProcessingStatus      @default(EN_ATTENTE)
+  dateDebut         DateTime?
+  dateFin           DateTime?
+  erreur            String?
+
+  documentVersion DocumentVersion @relation(fields: [documentVersionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([documentVersionId])
+  @@index([statut])
+  @@map("traitements_documents")
+}
+
+model DocumentChunk {
+  id                Int    @id @default(autoincrement())
+  documentVersionId Int
+  contenu           String
+  chunkIndex        Int
+  metadata          Json?
+
+  documentVersion DocumentVersion @relation(fields: [documentVersionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([documentVersionId, chunkIndex])
+  @@index([documentVersionId])
+  @@map("document_chunks")
+}
