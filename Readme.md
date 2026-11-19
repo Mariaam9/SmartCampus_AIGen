@@ -8,10 +8,14 @@ This repository contains the frontend, backend, AI service, and database infrast
 
 ```text
 SmartCampus_AIGen/
-├── frontend/          # React + TypeScript + Vite
-├── backend/           # Main backend API
-├── ai-service/        # Python + FastAPI
-├── infrastructure/    # Docker Compose configuration
+├── frontend/              # React + TypeScript + Vite
+├── backend/               # NestJS + Prisma backend API
+│   ├── prisma/            # Prisma schema, migrations and seed
+│   └── src/
+│       ├── prisma/        # Prisma module and service
+│       └── generated/     # Generated Prisma Client
+├── ai-service/            # Python + FastAPI
+├── infrastructure/        # Docker Compose configuration
 ├── .env.example
 └── README.md
 ```
@@ -23,7 +27,9 @@ Make sure you have installed:
 - Git
 - Node.js and npm
 - Python 3.10+
-- Docker Desktop (optional, only if using Docker PostgreSQL)
+- Docker
+
+PostgreSQL is provided through Docker. A local PostgreSQL installation is not required.
 
 ## 3. Clone the Repository
 
@@ -32,64 +38,200 @@ git clone <repository-url>
 cd SmartCampus_AIGen
 ```
 
-## 4. Database Setup (PostgreSQL + pgvector)
+## 4. Environment Configuration
 
-You can use either Docker PostgreSQL or a local PostgreSQL installation.
+Create the environment file from the example:
 
+```bash
+cp .env.example .env
 ```
 
-Start PostgreSQL:
+Make sure the PostgreSQL connection information corresponds to the Docker configuration.
+
+The backend uses the `DATABASE_URL` environment variable to connect to PostgreSQL.
+
+Example:
+
+```text
+DATABASE_URL="postgresql://smartcampus:<password>@localhost:5433/smartcampus"
+```
+
+Do not commit the `.env` file to Git.
+
+## 5. Database Setup — PostgreSQL + pgvector
+
+PostgreSQL is provided by Docker.
+
+From the project root:
 
 ```bash
 docker compose --env-file .env -f infrastructure/docker-compose.yml up -d
 ```
 
-Verify the container:
+Verify that the containers are running:
 
 ```bash
 docker ps
 ```
 
-The PostgreSQL container should have a healthy status.
+The PostgreSQL container should be healthy.
 
-Verify the database and pgvector extension:
-
-```bash
-docker exec -it smartcampus-postgres psql -U smartcampus -d smartcampus
-```
-
-Inside PostgreSQL:
-
-```sql
-CREATE EXTENSION IF NOT EXISTS vector;
-SELECT extname FROM pg_extension;
-```
-
-Exit with:
-
-```sql
-\q
-```
-
-Database connection:
+The default database configuration is:
 
 ```text
 Host: localhost
 Port: 5433
 Database: smartcampus
+User: smartcampus
 ```
 
-### Option B: Using Local PostgreSQL
+You can access PostgreSQL directly inside the container:
 
-If PostgreSQL is already installed, you can use your local database instead.
+```bash
+docker exec -it smartcampus-postgres psql -U smartcampus -d smartcampus
+```
 
-Create a database named `smartcampus`, enable pgvector if required, and configure the application connection string to use your local PostgreSQL port (usually 5432).
+Verify the pgvector extension:
 
-**Note:** You do not need Docker if you choose local PostgreSQL.
+```sql
+SELECT extname FROM pg_extension;
+```
 
-## 5. Frontend Setup
+If necessary:
 
-Navigate to the frontend directory:
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+Exit PostgreSQL:
+
+```sql
+\q
+```
+
+## 6. Backend Setup — NestJS + Prisma
+
+Navigate to the backend:
+
+```bash
+cd backend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Generate the Prisma Client:
+
+```bash
+npx prisma generate
+```
+
+Check the migration status:
+
+```bash
+npx prisma migrate status
+```
+
+Apply the database migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+For local development, migrations can also be created with:
+
+```bash
+npx prisma migrate dev
+```
+
+### Load demonstration data
+
+The project contains an official SmartCampus seed containing demonstration data for:
+
+- IIT
+- ISA
+- ISB
+- formations
+- spécialités
+- programmes
+- matières
+- conditions d'admission
+- prérequis
+- tarifs
+- responsible accounts
+
+Run:
+
+```bash
+npx prisma db seed
+```
+
+### Start the backend
+
+```bash
+npm run start:dev
+```
+
+The backend runs by default on:
+
+```text
+http://localhost:3000
+```
+
+### Test the database connection
+
+The backend provides a test endpoint:
+
+```text
+GET http://localhost:3000/test/database
+```
+
+You can test it with:
+
+```bash
+curl http://localhost:3000/test/database
+```
+
+The endpoint should return the establishments and their formations retrieved from PostgreSQL through Prisma.
+
+### Backend commands
+
+Development mode:
+
+```bash
+npm run start:dev
+```
+
+Normal startup:
+
+```bash
+npm run start
+```
+
+Production build:
+
+```bash
+npm run build
+```
+
+Tests:
+
+```bash
+npm run test
+```
+
+End-to-end tests:
+
+```bash
+npm run test:e2e
+```
+
+## 7. Frontend Setup
+
+Navigate to the frontend:
 
 ```bash
 cd frontend
@@ -109,11 +251,11 @@ npm run dev
 
 Open:
 
+```text
 http://localhost:5173/
+```
 
-Verify that the Vite + React application loads successfully.
-
-## 6. AI Service Setup
+## 8. AI Service Setup
 
 Navigate to the AI service:
 
@@ -127,10 +269,16 @@ Create a virtual environment:
 python -m venv .venv
 ```
 
-Activate it (Windows PowerShell):
+Activate it on Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+On Linux/macOS:
 
 ```bash
-.venv\Scripts\Activate.ps1
+source .venv/bin/activate
 ```
 
 Install dependencies:
@@ -139,93 +287,109 @@ Install dependencies:
 python -m pip install -r requirements.txt
 ```
 
+Start the FastAPI development server:
 
-Start the FastAPI development server using the project's configured application entry point.
+```bash
+python -m uvicorn app.main:app --reload
+```
 
 Verify the API through its Swagger documentation if enabled.
-```bash
-python -m uvicorn app.main:app --reload 
-```
-## 7. Backend Setup (NestJS)
 
-Navigate to the backend directory:
+## 9. Development Workflow
+
+When starting work on the project:
+
+### 1. Start PostgreSQL
+
+From the project root:
+
+```bash
+docker compose --env-file .env -f infrastructure/docker-compose.yml up -d
+```
+
+### 2. Start the backend
+
 ```bash
 cd backend
-```
-
-Install dependencies:
-```bash
 npm install
+npx prisma generate
+npm run start:dev
 ```
-Start the NestJS development server:
+
+### 3. Start the frontend
+
+In another terminal:
+
 ```bash
-npm run start:dev
+cd frontend
+npm install
+npm run dev
 ```
-The backend should start in development mode with automatic reloading when source files change.
 
-By default, NestJS runs on:
+### 4. Start the AI service
 
-http://localhost:3000/
+In another terminal:
 
-Test the Backend
+```bash
+cd ai-service
+source .venv/bin/activate
+python -m uvicorn app.main:app --reload
+```
 
-Open the following URL in your browser:
+## 10. Database Development
 
-http://localhost:3000/
+The Prisma schema is located at:
 
-You should receive the default NestJS response if you haven't modified the initial application endpoint.
+```text
+backend/prisma/schema.prisma
+```
 
-Alternatively, test using curl:
+Migrations are located at:
 
-curl http://localhost:3000/
+```text
+backend/prisma/migrations/
+```
 
-Expected default response:
+The database seed is located at:
 
-Hello World!
+```text
+backend/prisma/seed.ts
+```
 
-You can also verify that the application starts without compilation errors in the terminal.
+After modifying the Prisma schema, create a migration:
 
-Available NestJS commands:
+```bash
+cd backend
+npx prisma migrate dev --name <migration_name>
+```
 
-# Development mode with automatic reload
-npm run start:dev
+Then regenerate the Prisma Client:
 
-# Normal startup
-npm run start
+```bash
+npx prisma generate
+```
 
-# Production build
-npm run build
+If the database needs to be populated with the demonstration data:
 
-# Run tests
-npm run test
+```bash
+npx prisma db seed
+```
 
-# Run end-to-end tests
-npm run test:e2e
 
-## 8. Final Verification Checklist
+## 12. Stopping Services
 
-Before considering the development environment ready, verify:
+Stop the frontend, backend and AI service with:
 
-- [ ] Repository cloned successfully.
-- [ ] Frontend dependencies installed.
-- [ ] Frontend development server starts.
-- [ ] Backend dependencies installed.
-- [ ] Backend API starts successfully.
-- [ ] AI service virtual environment created.
-- [ ] AI service dependencies installed.
-- [ ] AI service starts successfully.
-- [ ] PostgreSQL starts successfully (Docker or local).
-- [ ] PostgreSQL connection works.
-- [ ] pgvector extension is available.
+```text
+Ctrl + C
+```
 
-## 9. Stopping Services
-
-Stop the frontend, backend, and AI service using `Ctrl + C` in their respective terminals.
-
-If using Docker PostgreSQL:
+To stop the Docker services:
 
 ```bash
 docker compose --env-file .env -f infrastructure/docker-compose.yml down
 ```
 
-**Important:** This command preserves the database volume and its data. Avoid using `down -v` unless you intentionally want to delete the database data.
+This preserves the database volume and its data.
+
+**Do not use `down -v` unless you intentionally want to delete the database data.**
