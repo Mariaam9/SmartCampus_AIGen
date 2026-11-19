@@ -23,4 +23,4 @@ Thumbs.db
 *.log
 
 # Prisma generated client
-backend/src/generated/backend/src/generated/
+backend/src/generated/
