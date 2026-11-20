@@ -12,17 +12,18 @@ SmartCampus_AIGen/
 ├── backend/               # NestJS + Prisma backend API
 │   ├── prisma/            # Prisma schema, migrations and seed
 │   └── src/
-│       ├── prisma/        # Prisma module and service
-│       └── generated/     # Generated Prisma Client
+│       └── prisma/        # Prisma module and service
 ├── ai-service/            # Python + FastAPI
 ├── infrastructure/        # Docker Compose configuration
 ├── .env.example
-└── README.md
+└── Readme.md
 ```
+
+> `backend/src/generated/` is generated automatically by Prisma and is ignored by Git. It is recreated with `npx prisma generate`.
 
 ## 2. Prerequisites
 
-Make sure you have installed:
+Make sure the following tools are installed:
 
 - Git
 - Node.js and npm
@@ -40,35 +41,63 @@ cd SmartCampus_AIGen
 
 ## 4. Environment Configuration
 
-Create the environment file from the example:
+The project uses environment variables for database and service configuration.
+
+### Root Environment File
+
+Create the root environment file from the provided example:
 
 ```bash
 cp .env.example .env
 ```
 
-Make sure the PostgreSQL connection information corresponds to the Docker configuration.
-
-The backend uses the `DATABASE_URL` environment variable to connect to PostgreSQL.
+The root `.env` is used by the Docker Compose infrastructure.
 
 Example:
 
-```text
-DATABASE_URL="postgresql://smartcampus:<password>@localhost:5433/smartcampus"
+```env
+POSTGRES_DB=smartcampus
+POSTGRES_USER=smartcampus
+POSTGRES_PASSWORD=smartcampus123
+POSTGRES_PORT=5433
 ```
 
-Do not commit the `.env` file to Git.
+### Backend Environment File
+
+The backend requires its own environment file for Prisma and NestJS.
+
+Create `backend/.env` with the following database connection:
+
+```env
+DATABASE_URL="postgresql://smartcampus:smartcampus123@localhost:5433/smartcampus"
+```
+
+The `DATABASE_URL` must match the PostgreSQL configuration used by the Docker container.
+
+The backend `.env` is used by Prisma to connect to PostgreSQL.
+
+### Important
+
+Do not commit environment files containing passwords or other secrets.
+
+The following files should remain local:
+
+```text
+.env
+backend/.env
+```
+
+Use `.env.example` files to document the required environment variables without exposing sensitive values.
 
 ## 5. Database Setup — PostgreSQL + pgvector
 
-PostgreSQL is provided by Docker.
-
-From the project root:
+Start PostgreSQL and pgvector using Docker Compose:
 
 ```bash
-docker compose --env-file .env -f infrastructure/docker-compose.yml up -d
+docker compose --env-file .env -f infrastructure/docker-compose.yaml up -d
 ```
 
-Verify that the containers are running:
+Verify that the PostgreSQL container is running:
 
 ```bash
 docker ps
@@ -76,7 +105,9 @@ docker ps
 
 The PostgreSQL container should be healthy.
 
-The default database configuration is:
+### Database Connection
+
+The database is accessible with the following configuration:
 
 ```text
 Host: localhost
@@ -85,13 +116,41 @@ Database: smartcampus
 User: smartcampus
 ```
 
-You can access PostgreSQL directly inside the container:
+### Access PostgreSQL from the Terminal
+
+You can access the PostgreSQL database directly using `psql` inside the Docker container:
 
 ```bash
 docker exec -it smartcampus-postgres psql -U smartcampus -d smartcampus
 ```
 
-Verify the pgvector extension:
+Inside `psql`, you can inspect the database:
+
+```sql
+\dt
+```
+
+Display the formations:
+
+```sql
+SELECT * FROM "Formation" LIMIT 10;
+```
+
+Count the formations:
+
+```sql
+SELECT COUNT(*) FROM "Formation";
+```
+
+Exit `psql`:
+
+```sql
+\q
+```
+
+### Verify pgvector
+
+Inside `psql`:
 
 ```sql
 SELECT extname FROM pg_extension;
@@ -103,12 +162,6 @@ If necessary:
 CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
-Exit PostgreSQL:
-
-```sql
-\q
-```
-
 ## 6. Backend Setup — NestJS + Prisma
 
 Navigate to the backend:
@@ -117,7 +170,7 @@ Navigate to the backend:
 cd backend
 ```
 
-Install dependencies:
+Install the dependencies:
 
 ```bash
 npm install
@@ -135,95 +188,113 @@ Check the migration status:
 npx prisma migrate status
 ```
 
-Apply the database migrations:
+Apply existing migrations:
 
 ```bash
 npx prisma migrate deploy
 ```
 
-For local development, migrations can also be created with:
+For local development, migrations can also be created and applied with:
 
 ```bash
 npx prisma migrate dev
 ```
 
-### Load demonstration data
+### Access the Database with Prisma Studio
 
-The project contains an official SmartCampus seed containing demonstration data for:
+Prisma Studio provides a web interface to inspect the database tables and data without using DBeaver or pgAdmin.
 
-- IIT
-- ISA
-- ISB
-- formations
-- spécialités
-- programmes
-- matières
-- conditions d'admission
-- prérequis
-- tarifs
-- responsible accounts
+From the backend directory:
 
-Run:
+```bash
+npx prisma studio
+```
+
+Then open:
+
+```text
+http://localhost:51212
+```
+
+Prisma Studio uses the `DATABASE_URL` defined in `backend/.env`.
+
+### Load Demonstration Data
+
+To populate the database with the demonstration data:
 
 ```bash
 npx prisma db seed
 ```
 
-### Start the backend
+The seed includes:
+
+- IIT
+- ISA
+- ISB
+- Formations
+- Spécialités
+- Programmes
+- Matières
+- Conditions d'admission
+- Prérequis
+- Tarifs
+- Responsable accounts
+
+### Start the Backend
+
+Start the NestJS development server:
 
 ```bash
 npm run start:dev
 ```
 
-The backend runs by default on:
+The backend is available at:
 
 ```text
 http://localhost:3000
 ```
 
-### Test the database connection
+### Test the Database Connection
 
-The backend provides a test endpoint:
+The database connection can be tested through the backend endpoint:
 
 ```text
 GET http://localhost:3000/test/database
 ```
 
-You can test it with:
+Or with `curl`:
 
 ```bash
 curl http://localhost:3000/test/database
 ```
 
-The endpoint should return the establishments and their formations retrieved from PostgreSQL through Prisma.
+### Backend Commands
 
-### Backend commands
-
-Development mode:
+Start the development server:
 
 ```bash
 npm run start:dev
 ```
 
-Normal startup:
+Start the application:
 
 ```bash
 npm run start
 ```
 
-Production build:
+Build the project:
 
 ```bash
 npm run build
 ```
 
-Tests:
+Run unit tests:
 
 ```bash
 npm run test
 ```
 
-End-to-end tests:
+Run end-to-end tests:
 
 ```bash
 npm run test:e2e
@@ -237,7 +308,7 @@ Navigate to the frontend:
 cd frontend
 ```
 
-Install dependencies:
+Install the dependencies:
 
 ```bash
 npm install
@@ -249,7 +320,7 @@ Start the development server:
 npm run dev
 ```
 
-Open:
+The frontend is available at:
 
 ```text
 http://localhost:5173/
@@ -304,10 +375,18 @@ When starting work on the project:
 From the project root:
 
 ```bash
-docker compose --env-file .env -f infrastructure/docker-compose.yml up -d
+docker compose --env-file .env -f infrastructure/docker-compose.yaml up -d
 ```
 
-### 2. Start the backend
+Verify that the PostgreSQL container is running:
+
+```bash
+docker ps
+```
+
+### 2. Start the Backend
+
+In a terminal:
 
 ```bash
 cd backend
@@ -316,7 +395,7 @@ npx prisma generate
 npm run start:dev
 ```
 
-### 3. Start the frontend
+### 3. Start the Frontend
 
 In another terminal:
 
@@ -326,7 +405,7 @@ npm install
 npm run dev
 ```
 
-### 4. Start the AI service
+### 4. Start the AI Service
 
 In another terminal:
 
@@ -334,6 +413,21 @@ In another terminal:
 cd ai-service
 source .venv/bin/activate
 python -m uvicorn app.main:app --reload
+```
+
+### 5. Access Prisma Studio
+
+If you need to inspect the database tables and data:
+
+```bash
+cd backend
+npx prisma studio
+```
+
+Then open:
+
+```text
+http://localhost:51212
 ```
 
 ## 10. Database Development
@@ -356,7 +450,9 @@ The database seed is located at:
 backend/prisma/seed.ts
 ```
 
-After modifying the Prisma schema, create a migration:
+### Create a Migration
+
+After modifying the Prisma schema:
 
 ```bash
 cd backend
@@ -369,14 +465,29 @@ Then regenerate the Prisma Client:
 npx prisma generate
 ```
 
+### Apply Existing Migrations
+
+To apply existing migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+### Seed the Database
+
 If the database needs to be populated with the demonstration data:
 
 ```bash
 npx prisma db seed
 ```
 
+### Check Migration Status
 
-## 12. Stopping Services
+```bash
+npx prisma migrate status
+```
+
+## 11. Stopping Services
 
 Stop the frontend, backend and AI service with:
 
@@ -387,7 +498,7 @@ Ctrl + C
 To stop the Docker services:
 
 ```bash
-docker compose --env-file .env -f infrastructure/docker-compose.yml down
+docker compose --env-file .env -f infrastructure/docker-compose.yaml down
 ```
 
 This preserves the database volume and its data.
