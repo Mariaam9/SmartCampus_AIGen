@@ -8,8 +8,8 @@ import {
   Req,
   UseGuards,
   Body,
+  NotFoundException,
 } from "@nestjs/common";
-
 
 import { CreateMessageDto } from "./dto/create-message.dto.js";
 import { VisitorService } from "./visitor.service.js";
@@ -59,18 +59,37 @@ export class VisitorController {
     return this.visitorService.getConversations(visitor.id);
   }
 
-  // Get a specific visitor conversation
+  // Send a message and receive an AI response
   @Post("conversations/:id/messages")
-@UseGuards(VisitorAuthGuard)
-createMessage(
-  @CurrentVisitor() visitor: VisitorSessionUser,
-  @Param("id", ParseIntPipe) id: number,
-  @Body() dto: CreateMessageDto,
-) {
-  return this.visitorService.createMessage(
-    visitor.id,
-    id,
-    dto.contenu,
-  );
-}
+  @UseGuards(VisitorAuthGuard)
+  createMessage(
+    @CurrentVisitor() visitor: VisitorSessionUser,
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dto: CreateMessageDto,
+  ) {
+    return this.visitorService.createMessage(
+      visitor.id,
+      id,
+      dto.contenu,
+    );
+  }
+
+  // Get a specific conversation with its messages
+  @Get("conversations/:id")
+  @UseGuards(VisitorAuthGuard)
+  async getConversation(
+    @CurrentVisitor() visitor: VisitorSessionUser,
+    @Param("id", ParseIntPipe) id: number,
+  ) {
+    const conversation = await this.visitorService.getConversation(
+      visitor.id,
+      id,
+    );
+
+    if (!conversation) {
+      throw new NotFoundException("Conversation not found.");
+    }
+
+    return conversation;
+  }
 }

@@ -6,8 +6,9 @@ import { CatalogueModule } from "./catalogue/catalogue.module.js";
 import { AuthModule } from './auth/auth.module.js';
 import { VisitorModule } from "./visitor/visitor.module.js";
 import { ConversationsModule } from "./conversations/conversations.module.js";
+import { ConfigModule } from "@nestjs/config";
 @Module({
-  imports: [PrismaModule, CatalogueModule, AuthModule, VisitorModule, ConversationsModule ],
+  imports: [PrismaModule, CatalogueModule, AuthModule, VisitorModule, ConversationsModule, ConfigModule ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -4,9 +4,12 @@ import { Injectable ,UnauthorizedException ,   NotFoundException,
 import { randomBytes, createHash } from "node:crypto";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { MessageRole } from "../generated/prisma/client.js";
+import { AiService } from "../ai/ai.service.js";
 @Injectable()
 export class VisitorService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService
+    , private readonly aiService: AiService
+  ) {}
 
   async createSession() {
     // Generate a secure random visitor token
@@ -130,18 +133,17 @@ async getConversation(
     },
   });
 }
+
 async createMessage(
   visitorSessionId: number,
   conversationId: number,
   contenu: string,
 ) {
+  // 1. Verify that this conversation belongs to the visitor.
   const conversation = await this.prisma.conversation.findFirst({
     where: {
       id: conversationId,
       visitorSessionId,
-    },
-    select: {
-      id: true,
     },
   });
 
@@ -149,7 +151,28 @@ async createMessage(
     throw new NotFoundException("Conversation not found.");
   }
 
-  const message = await this.prisma.message.create({
+  // 2. Retrieve the previous messages (maximum 10).
+  const previousMessages = await this.prisma.message.findMany({
+    where: {
+      conversationId,
+      role: {
+        in: [MessageRole.USER, MessageRole.ASSISTANT],
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 10,
+  });
+
+  // 3. Convert the previous messages into the FastAPI format.
+  const history = previousMessages.reverse().map((message) => ({
+    role: message.role.toLowerCase() as "user" | "assistant",
+    content: message.contenu,
+  }));
+
+  // 4. Save the user's current message.
+  const userMessage = await this.prisma.message.create({
     data: {
       conversationId,
       role: MessageRole.USER,
@@ -157,11 +180,38 @@ async createMessage(
     },
   });
 
-  await this.prisma.conversation.update({
-    where: { id: conversationId },
-    data: { updatedAt: new Date() },
+  // 5. Send the current message and previous history to FastAPI.
+  const aiResult = await this.aiService.generateResponse({
+    conversation_id: conversationId,
+    message: contenu,
+    history,
   });
 
-  return message;
+  // 6. Save the AI response.
+  const assistantMessage = await this.prisma.message.create({
+    data: {
+      conversationId,
+      role: MessageRole.ASSISTANT,
+      contenu: aiResult.response,
+    },
+  });
+
+  // 7. Update the conversation's last activity.
+  await this.prisma.conversation.update({
+    where: {
+      id: conversationId,
+    },
+    data: {
+      updatedAt: new Date(),
+    },
+  });
+
+  // 8. Return both messages and the model used.
+  return {
+    userMessage,
+    assistantMessage,
+    model: aiResult.model,
+  };
 }
+
 }

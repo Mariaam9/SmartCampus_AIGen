@@ -23,3 +23,8 @@ python-docx
 
 # Embeddings
 sentence-transformers
+
+# LLM communication
+httpx
+
+pydantic-settings
