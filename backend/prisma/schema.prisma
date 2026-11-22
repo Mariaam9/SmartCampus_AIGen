@@ -322,6 +322,7 @@ model VisitorSession {
   createdAt       DateTime @default(now())
   expiresAt       DateTime
   lastActivityAt  DateTime @default(now())
+  messageCount    Int      @default(0)
   userId          Int?
 
   user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
