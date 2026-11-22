@@ -1,7 +1,7 @@
 
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient } from "../src/generated/prisma/client.js";
 import bcrypt from "bcryptjs";
 
 const connectionString = process.env.DATABASE_URL;
@@ -1088,6 +1088,56 @@ async function deleteOldDemoAccounts() {
   );
 }
 
+
+// =========================================================
+// ADMIN INITIAL
+// =========================================================
+
+async function seedAdmin() {
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  const nom = process.env.ADMIN_NOM;
+  const prenom = process.env.ADMIN_PRENOM;
+
+  if (!email || !password || !nom || !prenom) {
+    throw new Error("Missing ADMIN environment variables.");
+  }
+
+  if (password.length < 12) {
+    throw new Error("ADMIN_PASSWORD must contain at least 12 characters.");
+  }
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (existingUser) {
+    if (existingUser.role !== "ADMIN") {
+      throw new Error(
+        `The email ${email} already belongs to a non-admin account.`,
+      );
+    }
+
+    console.log(`ℹ️ ADMIN ${email} already exists. No changes made.`);
+    return;
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+
+  await prisma.user.create({
+    data: {
+      email,
+      passwordHash,
+      nom,
+      prenom,
+      role: "ADMIN",
+    },
+  });
+
+  console.log(`✅ Initial ADMIN ${email} created.`);
+}
+
+
 // =========================================================
 // MAIN
 // =========================================================
@@ -1197,9 +1247,15 @@ async function main() {
 
   // -------------------------------------------------------
   // 5. Suppression des anciens comptes fictifs
+
+
+  // 5. Création du compte ADMIN initial
+await seedAdmin();
   // -------------------------------------------------------
 
   await deleteOldDemoAccounts();
+
+
 
   console.log("🎉 Peuplement officiel de la base terminé !");
 }

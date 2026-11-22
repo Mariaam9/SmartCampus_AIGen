@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
-import { CatalogueService, CATALOGUE_RESOURCES, CatalogueResource } from './catalogue.service';
-import { CatalogueDto, ListQueryDto, ProgrammeMatiereDto } from './dto/catalogue.dto';
+import { CatalogueService, CATALOGUE_RESOURCES, CatalogueResource } from './catalogue.service.js';
+import { CatalogueDto, ListQueryDto, ProgrammeMatiereDto } from './dto/catalogue.dto.js';
 
 @Controller('api')
 export class CatalogueController {

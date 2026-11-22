@@ -87,7 +87,6 @@ model Etablissement {
   logoUrl     String?
 
   formations   Formation[]
-  responsables Responsable[]
   documents    Document[]
 
   createdAt DateTime @default(now())
@@ -295,22 +294,21 @@ model Candidat {
 }
 
 model Responsable {
-  id             Int    @id @default(autoincrement())
-  userId         Int    @unique
-  etablissementId Int
-  fonction       String?
-  service        String?
+  id       Int     @id @default(autoincrement())
+  userId   Int     @unique
+  fonction String?
+  service  String?
 
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  etablissement Etablissement @relation(fields: [etablissementId], references: [id], onDelete: Cascade)
-  rendezVous    RendezVous[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  rendezVous RendezVous[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([etablissementId])
   @@map("responsables")
 }
+
 
 // ============================================================
 // VISITEURS / CONVERSATIONS

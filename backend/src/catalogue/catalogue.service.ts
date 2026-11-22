@@ -6,12 +6,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service.js';
 import {
   CatalogueDto,
   ListQueryDto,
   ProgrammeMatiereDto,
-} from './dto/catalogue.dto';
+} from './dto/catalogue.dto.js';
 
 export const CATALOGUE_RESOURCES = [
   'formations',

@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
-import { CatalogueService } from './catalogue.service';
+import { CatalogueService } from './catalogue.service.js';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 
 describe('CatalogueService – règles des trois tâches', () => {
   const service = new CatalogueService({} as any);
