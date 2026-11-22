@@ -1,22 +1,39 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { jest } from '@jest/globals';
+import { Test, TestingModule } from "@nestjs/testing";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
 
-describe('AppController', () => {
+describe("AppController", () => {
   let appController: AppController;
 
+  const appServiceMock = {
+    getData: jest.fn().mockResolvedValue([]),
+  };
+
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService],
+      providers: [
+        {
+          provide: AppService,
+          useValue: appServiceMock,
+        },
+      ],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    appController = module.get<AppController>(AppController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("testDatabase", () => {
+    it("should return establishment data from AppService", async () => {
+      const result = await appController.testDatabase();
+
+      expect(result).toEqual([]);
+      expect(appServiceMock.getData).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -1,0 +1,4 @@
+model,first_place_pct,mean_rank
+Qwen3-8B,100.0,1.0
+Gemma-3-4B-IT,0.0,2.0
+Aya-Expanse-8B,0.0,3.0

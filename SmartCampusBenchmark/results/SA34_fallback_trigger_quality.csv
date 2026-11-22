@@ -1,0 +1,5 @@
+language,cases,true_errors,fallback_signals,precision,recall,f1,missed_errors,unneeded_fallbacks
+ALL,90,62,6,1.0,0.0967741935483871,0.17647058823529413,56,0
+arabizi,30,21,5,1.0,0.23809523809523808,0.3846153846153846,16,0
+mixed,30,20,1,1.0,0.05,0.09523809523809523,19,0
+tn_ar,30,21,0,,0.0,,21,0

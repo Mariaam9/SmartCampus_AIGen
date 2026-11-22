@@ -1,0 +1,10 @@
+model,status,successes,requested,load_seconds,error,prompt_hash
+Gemma-3-4B-IT,completed,180,180,40.861560389999994,,7d7370779964
+ESPRIT-Derja-Qwen3-8B-v2,failed,0,180,,"401 Client Error. (Request ID: Root=1-6b02d60d-001a748161028af11d98237a;b961a27f-aea4-47f3-8613-573ddd0297e3)
+
+Repository Not Found for url: https://huggingface.co/api/models/ESPRIT-Group/ESPRIT-Derja-Qwen3-8B-v2/revision/main.
+Please make sure you specified the correct `repo_id` and `repo_type`.
+If you are trying to access a private or gated repo, make sure you are authenticated. For more details, see https://huggingface.co/docs/huggingface_hub/authentication
+Invalid username or password.",7d7370779964
+Qwen3-8B,completed,180,180,61.882927280999866,,7d7370779964
+Aya-Expanse-8B,completed,180,180,67.12312749199918,,7d7370779964
