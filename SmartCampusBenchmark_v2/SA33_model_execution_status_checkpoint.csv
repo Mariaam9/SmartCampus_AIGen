@@ -1,0 +1,4 @@
+model,status,successes,requested,load_seconds,error,prompt_hash
+Qwen3-1.7B,completed,180,180,44.21356135999997,,11c4f3013cbe
+Gemma-3-1B-IT,completed,180,180,12.774567021999928,,11c4f3013cbe
+Jais-2.7B-Chat,completed,0,180,32.091183382000054,,11c4f3013cbe

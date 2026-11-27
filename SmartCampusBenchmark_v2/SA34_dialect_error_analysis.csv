@@ -1,0 +1,91 @@
+case_id,language_expected,question,intent_expected,intent_predicted,slot_missing,error_tags
+TN_AR-ADM-01,tn_ar,شنوة المراحل العامة باش نترشح لتكوين في IIT بعد الباك؟,admission,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+TN_AR-ADM-02,tn_ar,أنا في terminale ونحب نقرا في IIT. شنوة المعلومات اللي يلزمني نتثبت منها قبل ما نبعث candidature؟,admission,orientation,institution|level,wrong_intent;missing_profile_slots
+TN_AR-ADM-03,tn_ar,شنوة الإجراءات اللي يلزمني نعرفها باش نترشح لـ ISB بعد الباك؟,admission,orientation,institution,wrong_intent;wrong_language_label;missing_profile_slots
+TN_AR-INF-01,tn_ar,شنية licences informatique اللي يعرضهم IIT: réseaux و cybersécurité ولا systèmes embarqués و IoT ولا Big Data ولا génie logiciel؟,information,information,institution,missing_profile_slots
+TN_AR-INF-02,tn_ar,نحب نعرف أكثر على Licence Mécatronique et Systèmes Intelligents في IIT. وين نلقى المعلومات؟,information,information,institution|target_program,missing_profile_slots
+TN_AR-INF-03,tn_ar,شنية التكوينات في systèmes électriques intelligents و énergies renouvelables الموجودة في IIT؟,information,information,institution|target_program,missing_profile_slots
+TN_AR-ORI-01,tn_ar,أنا bac math ونحب المات والبرمجة وهدفي génie logiciel. شنية المسارات في IIT اللي نجم نستكشفهم؟,orientation,,career_goal|favorite_subjects|institution|level,invalid_json;wrong_intent;wrong_language_label;missing_profile_slots;empty_answer
+TN_AR-ORI-02,tn_ar,أنا bac sciences expérimentales ونحب البيولوجيا والخدمة في laboratoire. شنية المسارات في ISB اللي نجم نشوفهم؟,orientation,information,favorite_subjects|institution|level|preferred_domain,wrong_intent;missing_profile_slots
+TN_AR-ORI-03,tn_ar,نحب Linux و réseaux و cybersécurité. عاونّي نعرف شنية التكوينات في IIT اللي تناسب اهتماماتي.,orientation,orientation,favorite_subjects|institution|preferred_domain,missing_profile_slots
+TN_AR-COM-01,tn_ar,قارنلي بين licence Réseaux et Cybersécurité و Big Data et Analyse de Données في IIT، من غير ما تخترع تفاصيل موش مؤكدة.,comparison,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+TN_AR-COM-02,tn_ar,شنوة الفرق العام اللي يلزمني نشوفو بين Génie Logiciel et Systèmes Intelligents و Systèmes Embarqués et IoT؟,comparison,information,,wrong_intent;wrong_language_label
+TN_AR-COM-03,tn_ar,محتار بين Licence و Cycle Préparatoire في IIT. اسألني الأسئلة اللازمة قبل المقارنة.,comparison,orientation,institution,wrong_intent;wrong_language_label;missing_profile_slots
+TN_AR-PRO-01,tn_ar,أنا terminale bac math، جبت 15 في maths و11 في physique و14 في informatique. لخصلي profil متاعي.,profile,orientation,grades|level,wrong_intent;wrong_language_label;missing_profile_slots
+TN_AR-PRO-02,tn_ar,أنا bac sciences expérimentales، نحب biologie و chimie ونفضل الخدمة التطبيقية في laboratoire.,profile,orientation,favorite_subjects|learning_preference|level,wrong_intent;missing_profile_slots
+TN_AR-PRO-03,tn_ar,عندي bac technique، باهي في électronique و mécanique ونفضل les projets التطبيقية.,profile,orientation,favorite_subjects|learning_preference|level,wrong_intent;missing_profile_slots
+TN_AR-PRE-01,tn_ar,نحب نحضر préinscription في IIT Génie Logiciel. شنية المعلومات الشخصية والقراية اللي يلزمني نوجدهم؟,pre_registration,pre_registration,institution|target_program,missing_profile_slots
+TN_AR-PRE-02,tn_ar,نحب نترشح لـ ISB في Génie Biomédical. عاونّي نحضر المعلومات اللازمة.,pre_registration,orientation,institution|target_program,wrong_intent;missing_profile_slots
+TN_AR-PRE-03,tn_ar,مهتم بـ Licence Réseaux et Cybersécurité في IIT. شنية الخطوة الجاية باش نحضر dossier؟,pre_registration,admission,institution|target_program,wrong_intent;missing_profile_slots
+TN_AR-REF-01,tn_ar,عاود صيغلي طلبي بطريقة واضحة: نحب نقرا informatique في صفاقس أما موش عارف أنهي parcours نختار.,reformulation,orientation,,wrong_intent
+TN_AR-REF-02,tn_ar,باش نفسرلك شنوة نحب: نحب machines و capteurs وشوية code. صيغلي شنوّة نلوج عليه.,reformulation,,,invalid_json;wrong_intent;wrong_language_label;empty_answer
+TN_AR-REF-03,tn_ar,تنجم تعاود تصيغ السؤال هذا بطريقة واضحة لمسؤول: شنية شروط الدخول لـ ISB؟,reformulation,information,institution,wrong_intent;missing_profile_slots
+TN_AR-AMB-01,tn_ar,نحب نقرا informatique أما موش informatique بالضبط. شنوة تقترح عليا؟,ambiguous,orientation,,wrong_intent
+TN_AR-AMB-02,tn_ar,نحب formation قصيرة، أما طويلة كان ممكن، وتعطيني وقت برشا. شنوة نختار؟,ambiguous,orientation,,wrong_intent
+TN_AR-AMB-03,tn_ar,نحب نسجل غادي في الاختصاص هذا، إنت فاهم شنية نقصد.,ambiguous,orientation,,wrong_intent
+TN_AR-QUI-01,tn_ar,حضّرلي 3 أسئلة من الساهل للصعيب في algorithmique باش نعرف niveau متاعي قبل ما نختار informatique.,quiz,,preferred_domain,invalid_json;wrong_intent;wrong_language_label;missing_profile_slots;empty_answer
+TN_AR-QUI-02,tn_ar,نحب QCM صغير على réseaux informatiques، وصححلي بعد ما نجاوب.,quiz,information,preferred_domain,wrong_intent;missing_profile_slots
+TN_AR-QUI-03,tn_ar,حضّرلي QCM في biologie générale باش نعرف شنية المفاهيم اللي نفهمهم.,quiz,information,preferred_domain,wrong_intent;missing_profile_slots
+TN_AR-APP-01,tn_ar,نحب ناخو rendez-vous مع مسؤول admissions في IIT. كيفاش نحضر طلبي؟,appointment,,institution,invalid_json;wrong_intent;wrong_language_label;missing_profile_slots;empty_answer
+TN_AR-APP-02,tn_ar,نحب نحكي مع مسؤول في ISB باش نتثبت من معلومة على licence.,appointment,information,institution,wrong_intent;missing_profile_slots
+TN_AR-APP-03,tn_ar,نحب entretien مع conseiller باش نحكي على profil متاعي والتوجيه.,appointment,orientation,,wrong_intent
+ARABIZI-ADM-01,arabizi,chnowa les étapes générales bech n9addem candidature fi IIT ba3d el bac?,admission,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-ADM-02,arabizi,ena terminale w nheb na9ra fi IIT. chnowa les infos elli lezem net2aked menhom 9bal ma naba3th candidature?,admission,information,institution|level,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-ADM-03,arabizi,chnowa les démarches elli lezem na3refhom bech nترشح lel ISB ba3d el bac?,admission,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-INF-01,arabizi,chneya les licences informatique elli ya3redhom IIT: réseaux w cybersécurité wala systèmes embarqués w IoT wala Big Data wala génie logiciel?,information,information,institution,wrong_language_label;missing_profile_slots
+ARABIZI-INF-02,arabizi,nheb na3ref akther 3la Licence Mécatronique et Systèmes Intelligents fi IIT. Win nal9a les infos?,information,information,institution|target_program,wrong_language_label;missing_profile_slots
+ARABIZI-INF-03,arabizi,chneya les formations systèmes électriques intelligents w énergies renouvelables fi IIT?,information,information,institution|target_program,wrong_language_label;missing_profile_slots
+ARABIZI-ORI-01,arabizi,ena bac math w n7eb maths w programmation w hadafi génie logiciel. chnowa parcours IIT elli najm nestaكشف?,orientation,information,career_goal|favorite_subjects|institution|level,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-ORI-02,arabizi,ena bac sciences expérimentales w n7eb biologie w travail laboratoire. chnowa pistes ISB elli najm nchouf?,orientation,information,favorite_subjects|institution|level|preferred_domain,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-ORI-03,arabizi,n7eb Linux w réseaux w cybersécurité. 3aweni na3ref anhi formations IIT ynajmou ynaسبو اهتماماتي.,orientation,,favorite_subjects|institution|preferred_domain,invalid_json;wrong_intent;wrong_language_label;missing_profile_slots;empty_answer
+ARABIZI-COM-01,arabizi,"9arenli bin licence Réseaux et Cybersécurité w Big Data et Analyse de Données fi IIT, bla ma t5are3 détails.",comparison,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-COM-02,arabizi,chnowa lfar9 el 3am elli lezem na5ouh bin Génie Logiciel et Systèmes Intelligents w Systèmes Embarqués et IoT?,comparison,,,invalid_json;wrong_intent;wrong_language_label;empty_answer
+ARABIZI-COM-03,arabizi,m7ayer bin Licence w Cycle Préparatoire fi IIT. es2elni les questions lezem 9bal comparaison.,comparison,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-PRO-01,arabizi,"ena terminale bac math, jebt 15 maths w 11 physique w 14 informatique. lakkhesli profil mte3i.",profile,information,grades|level,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-PRO-02,arabizi,"ena bac sciences expérimentales, n7eb biologie w chimie w nfadhel travail pratique fel laboratoire.",profile,orientation,favorite_subjects|learning_preference|level,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-PRO-03,arabizi,"3andi bac technique, behi fel électronique w mécanique w nfadhel les projets appliqués.",profile,orientation,favorite_subjects|learning_preference|level,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-PRE-01,arabizi,nheb n7adher préinscription fi IIT Génie Logiciel. chnowa les infos personnelles w scolaires lezem nجهز?,pre_registration,pre_registration,institution|target_program,wrong_language_label;missing_profile_slots
+ARABIZI-PRE-02,arabizi,nheb na3mel candidature lel ISB fi Génie Biomédical. 3aweni n7adher les informations nécessaires.,pre_registration,information,institution|target_program,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-PRE-03,arabizi,interessé b Licence Réseaux et Cybersécurité fi IIT. chnowa next step bech n7adher dossier?,pre_registration,,institution|target_program,invalid_json;wrong_intent;wrong_language_label;missing_profile_slots;empty_answer
+ARABIZI-REF-01,arabizi,3awed صياغة talab mte3i b tari9a wadh7a: nheb na9ra informatique fi Sfax ama ma na3refch anhi parcours ne5tar.,reformulation,information,,wrong_intent;wrong_language_label
+ARABIZI-REF-02,arabizi,bech nfasserlek chnowa nheb: nheb machines w capteurs w chwaya code. sاغli chnowa nlawwej 3lih.,reformulation,information,,wrong_intent;wrong_language_label
+ARABIZI-REF-03,arabizi,tnajem t3awed tsayyegh sou2el hedha b tari9a wadh7a lel responsable: chnowa conditions d'accès lel ISB?,reformulation,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-AMB-01,arabizi,nheb na9ra informatique ama moch informatique bel dhabt. chnowa ta9tare7 3liya?,ambiguous,information,,wrong_intent;wrong_language_label
+ARABIZI-AMB-02,arabizi,nheb formation 9sira ama twila ken momken w tekhli waqt barcha. chnowa ne5tar?,ambiguous,information,,wrong_intent;wrong_language_label
+ARABIZI-AMB-03,arabizi,"nheb nsejjel ghadi fel spécialité hedhi, enti fehem chnowa na9sed.",ambiguous,orientation,,wrong_intent;wrong_language_label
+ARABIZI-QUI-01,arabizi,7adherli 3 as2la men sahl lel s3ib fel algorithmique bech na3ref niveau mte3i 9bal ma ne5tar informatique.,quiz,orientation,preferred_domain,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-QUI-02,arabizi,"nheb QCM sghir 3la réseaux informatiques, w sa77a7li ba3d ma njewb.",quiz,information,preferred_domain,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-QUI-03,arabizi,7adherli QCM fi biologie générale bech na3ref chnowa les notions elli nefhemhom.,quiz,information,preferred_domain,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-APP-01,arabizi,nheb ne5ou rendez-vous m3a responsable admissions fi IIT. kifech n7adher talab mte3i?,appointment,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-APP-02,arabizi,nheb ne7ki m3a responsable fi ISB bech net2aked men ma3louma 3la licence.,appointment,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+ARABIZI-APP-03,arabizi,nheb entretien m3a conseiller bech na7ki 3la profil mte3i w orientation.,appointment,orientation,,wrong_intent;wrong_language_label
+MIXED-ADM-01,mixed,Quelles sont les étapes pour candidater à l'IIT بعد الباك؟,admission,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-ADM-02,mixed,Je suis terminale w nheb na9ra fi IIT. Quelles informations vérifier avant candidature?,admission,admission,institution|level,wrong_language_label;missing_profile_slots
+MIXED-ADM-03,mixed,شنوة démarches pour candidater à l'ISB après le bac?,admission,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-INF-01,mixed,"Quelles licences informatique à IIT: réseaux, cybersécurité ولا Big Data؟",information,information,institution,wrong_language_label;missing_profile_slots
+MIXED-INF-02,mixed,Je veux comprendre la Licence Mécatronique et Systèmes Intelligents. وين نلقى les infos?,information,information,institution|target_program,wrong_language_label;missing_profile_slots
+MIXED-INF-03,mixed,شنية formations en systèmes électriques intelligents et énergies renouvelables à IIT?,information,information,institution|target_program,wrong_language_label;missing_profile_slots
+MIXED-ORI-01,mixed,"أنا bac math, j'aime programmation et je vise génie logiciel. Quelles pistes à IIT?",orientation,orientation,career_goal|favorite_subjects|institution|level,wrong_language_label;missing_profile_slots
+MIXED-ORI-02,mixed,Je suis bac sciences expérimentales ونحب biologie et laboratoire. Quelles pistes ISB?,orientation,information,favorite_subjects|institution|level|preferred_domain,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-ORI-03,mixed,"n7eb Linux, réseaux et cybersécurité. Quel parcours IIT يناسبني؟",orientation,orientation,favorite_subjects|institution|preferred_domain,wrong_language_label;missing_profile_slots
+MIXED-COM-01,mixed,Compare licence Réseaux et Cybersécurité et Big Data à IIT، sans inventer le détail.,comparison,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-COM-02,mixed,شنوة الفرق entre Génie Logiciel et Systèmes Intelligents et Systèmes Embarqués et IoT?,comparison,information,,wrong_intent;wrong_language_label
+MIXED-COM-03,mixed,Je suis m7ayer entre Licence et Cycle Préparatoire. Pose-moi les questions nécessaires.,comparison,orientation,,wrong_intent;wrong_language_label
+MIXED-PRO-01,mixed,"Je suis terminale bac math، mes notes 15 maths, 11 physique, 14 informatique. Résume mon profil.",profile,orientation,grades|level,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-PRO-02,mixed,"أنا bac sciences expérimentales, j'aime biologie et chimie و je préfère le laboratoire.",profile,,favorite_subjects|learning_preference|level,invalid_json;wrong_intent;wrong_language_label;missing_profile_slots;empty_answer
+MIXED-PRO-03,mixed,J'ai bac technique، je suis bon en électronique et mécanique و n7eb les projets pratiques.,profile,orientation,,wrong_intent;wrong_language_label;invented_profile_slots
+MIXED-PRE-01,mixed,Je veux préparer une préinscription IIT en Génie Logiciel. شنوّة les infos à préparer?,pre_registration,,institution|target_program,invalid_json;wrong_intent;wrong_language_label;missing_profile_slots;empty_answer
+MIXED-PRE-02,mixed,Je veux candidater à l'ISB en Génie Biomédical. عاونّي نحضر dossier.,pre_registration,,institution|target_program,invalid_json;wrong_intent;wrong_language_label;missing_profile_slots;empty_answer
+MIXED-PRE-03,mixed,I'm interested in Réseaux et Cybersécurité à IIT. شنية next step?,pre_registration,,institution|target_program,invalid_json;wrong_intent;wrong_language_label;missing_profile_slots;empty_answer
+MIXED-REF-01,mixed,Reformule ma demande clairement: n7eb na9ra informatique fi Sfax ama je ne sais pas quel parcours.,reformulation,information,,wrong_intent;wrong_language_label
+MIXED-REF-02,mixed,"Je vais expliquer: n7eb machines, capteurs et un peu de code. Reformule ce que je cherche.",reformulation,information,,wrong_intent;wrong_language_label
+MIXED-REF-03,mixed,Peux-tu reformuler pour un responsable: شنية conditions d'accès à ISB?,reformulation,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-AMB-01,mixed,Je veux faire informatique ama moch informatique exactement. Qu'est-ce que tu proposes?,ambiguous,orientation,,wrong_intent;wrong_language_label
+MIXED-AMB-02,mixed,"نحب formation courte mais longue si possible, qui laisse beaucoup de temps. Que choisir?",ambiguous,information,,wrong_intent;wrong_language_label
+MIXED-AMB-03,mixed,Je veux m'inscrire ghadi fi spécialité hedhi. Tu vois laquelle?,ambiguous,orientation,,wrong_intent;wrong_language_label
+MIXED-QUI-01,mixed,Prépare trois questions progressives en algorithmique باش نعرف mon niveau.,quiz,orientation,preferred_domain,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-QUI-02,mixed,"nheb QCM sur réseaux informatiques, avec correction après mes réponses.",quiz,information,preferred_domain,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-QUI-03,mixed,Prépare un QCM de biologie générale باش نعرف les notions maîtrisées.,quiz,information,preferred_domain,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-APP-01,mixed,Je veux un rendez-vous avec responsable admissions IIT. كيفاش نحضر ma demande?,appointment,appointment,institution,wrong_language_label;missing_profile_slots
+MIXED-APP-02,mixed,نحب نحكي avec un responsable ISB pour vérifier une information de licence.,appointment,information,institution,wrong_intent;wrong_language_label;missing_profile_slots
+MIXED-APP-03,mixed,Je veux un entretien avec conseiller pour parler de mon profil w orientation.,appointment,orientation,,wrong_intent;wrong_language_label
